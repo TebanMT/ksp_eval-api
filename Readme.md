@@ -31,9 +31,6 @@ $ make db
 y posteriormente
 
 ```
-$ nosetests
+$ make tests
 ```
-
-Para que se pueda conecatar a la bd es necesario modificar un par de cosas en '/service/congid.py'.
-
-Se debe cambiar el valor de "DATABASE_PASSWORD" a "postgresql" y el de "DATABASE_HOST" por "localhost", ya que al utilizar docker compose se crea una network unica para los contenedores.
+Este comando exporta las variables de entorno necesario para conectarce a la instancia de postgresql creada con 'make db'.
