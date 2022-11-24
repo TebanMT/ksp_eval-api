@@ -6,9 +6,8 @@ This microservice handles the lifecycle of Employes
 # pylint: disable=unused-import
 from flask import jsonify, request, make_response, abort, url_for   # noqa; F401
 from service.models import Employed, Beneficiary
-from service.common import status  # HTTP Status Codes
+from service.common import status, util  # HTTP Status Codes
 from . import app  # Import Flask application
-
 
 ############################################################
 # Health Endpoint
@@ -56,6 +55,9 @@ def create_employes():
         beneficiary_data = request.get_json()["beneficiary"]
     except KeyError:
         abort(status.HTTP_400_BAD_REQUEST)
+    img = employe_data["photo"]
+    url= util.upload_img(img,employe_data["name"])
+    employe_data["photo"] = url
     employe = Employed()
     employe.deserialize(employe_data)
     employe.create()

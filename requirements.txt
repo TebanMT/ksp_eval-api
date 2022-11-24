@@ -31,3 +31,4 @@ httpie==3.2.1
 #Flask talisman
 Flask-Talisman==1.0.0
 Flask-Cors
+boto3

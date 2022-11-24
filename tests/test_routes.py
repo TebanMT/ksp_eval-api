@@ -8,10 +8,11 @@ Test cases can be run with the following:
 import os
 import logging
 from unittest import TestCase
+from unittest.mock import patch
 from tests.factories import EmployedFactory, BeneficiaryFactory, Beneficiary
 from service.common import status  # HTTP Status Codes
 from service.models import db, Employed, init_db
-from service.routes import app
+from service.routes import app, util
 from service import talisman
 
 DATABASE_URI = os.getenv(
@@ -101,8 +102,10 @@ class TestEmployedService(TestCase):
         data = resp.get_json()
         self.assertEqual(data["status"], "OK")
 
-    def test_create_an_employe(self):
+    @patch('service.common.util.upload_img')
+    def test_create_an_employe(self, mock_upload_img):
         """It should Create a new employe"""
+        mock_upload_img.return_value = ""
         employe = EmployedFactory()
         beneficiary = BeneficiaryFactory(employed_id=employe.id)
         data = {"employe":employe.serialize(), "beneficiary":beneficiary.serialize()}
@@ -140,9 +143,10 @@ class TestEmployedService(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-
-    def test_read_an_employe(self):
+    @patch('service.common.util.upload_img')
+    def test_read_an_employe(self, mock_upload_img):
         "It should read a single employe from the database"
+        mock_upload_img.return_value = ""
         employe = self._create_employes(1)[0]
         route = BASE_URL+"/{}".format(employe.id)
         resp = self.client.get(route, content_type="application/json")
@@ -158,9 +162,11 @@ class TestEmployedService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(resp.get_json()["message"], "404 Not Found: Employe [0] not found")
 
-    def test_update_employe(self):
+    @patch('service.common.util.upload_img')
+    def test_update_employe(self, mock_upload_img):
         """It should Update an existing employe"""
         # create an employe to update
+        mock_upload_img.return_value = ""
         test_employe = EmployedFactory()
         data = {"employe":test_employe.serialize(), "beneficiary":[]}
         resp = self.client.post(BASE_URL, json=data)
@@ -174,9 +180,11 @@ class TestEmployedService(TestCase):
         self.assertEqual(updated_employe["name"], "Something Known")
         self.assertEqual(updated_employe["id"], updated_employe["id"])
 
-    def test_update_account_not_found(self):
+    @patch('service.common.util.upload_img')
+    def test_update_account_not_found(self, mock_upload_img):
         "It should not update an employe"
         # create an employe to update
+        mock_upload_img.return_value = ""
         test_employe = EmployedFactory()
         data = {"employe":test_employe.serialize(), "beneficiary":[]}
         resp = self.client.post(BASE_URL, json=data)
@@ -188,8 +196,10 @@ class TestEmployedService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(resp.get_json()["message"], "404 Not Found: Employe [0] not found")
 
-    def test_list_all_accounts(self):
+    @patch('service.common.util.upload_img')
+    def test_list_all_accounts(self, mock_upload_img):
         """It should return all the accounts in the database"""
+        mock_upload_img.return_value = ""
         self._create_employes(10)
         resp = self.client.get(f"{BASE_URL}", content_type="application/json")
         accounts = resp.get_json()
@@ -200,9 +210,11 @@ class TestEmployedService(TestCase):
         resp = self.client.get(f"{BASE_URL}", content_type="application/json")
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_delete_an_account(self):
+    @patch('service.common.util.upload_img')
+    def test_delete_an_account(self, mock_upload_img):
         """It should delete an employe"""
         # create an employe to delete
+        mock_upload_img.return_value = ""
         employe = self._create_employes(1)[0]
         # verify the employe was created successfully
         resp = self.client.get(f"{BASE_URL}/{employe.id}", content_type="application/json")

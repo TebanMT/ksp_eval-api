@@ -73,7 +73,6 @@ def mediatype_not_supported(error):
 @app.errorhandler(status.HTTP_500_INTERNAL_SERVER_ERROR)
 def internal_server_error(error):
     """Handles unexpected server error with 500_SERVER_ERROR"""
-    print("Fola")
     message = str(error)
     app.logger.error(message)
     return (

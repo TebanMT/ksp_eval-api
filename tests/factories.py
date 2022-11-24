@@ -27,6 +27,10 @@ gender_provider = DynamicProvider(
      provider_name="gender",
      elements=["Hombre", "Mujer", "No binario", "Otro"],
 )
+photo_provider = DynamicProvider(
+     provider_name="photo",
+     elements=["data:image/png;base64,iVBORw0KGgoAA"],
+)
 
 
 fake = Faker()
@@ -34,7 +38,7 @@ fake.add_provider(job_position_provider)
 fake.add_provider(status_provider)
 fake.add_provider(relationship_provider)
 fake.add_provider(gender_provider)
-
+fake.add_provider(photo_provider)
 
 
 class EmployedFactory(factory.Factory):
@@ -50,6 +54,7 @@ class EmployedFactory(factory.Factory):
     job_position = fake.job_position()
     salary = fake.pyfloat(min_value=1000.00, max_value=1000000.00)
     status = fake.status()
+    photo = fake.photo()
     date_hire = FuzzyDate(date(2008, 1, 1))
 
 class BeneficiaryFactory(factory.Factory):

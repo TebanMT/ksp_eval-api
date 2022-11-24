@@ -93,6 +93,7 @@ class Employed(db.Model, PersistentBase):
     salary = db.Column(db.Numeric(precision=10, scale=2))
     status =  db.Column(db.String(64))
     date_hire = db.Column(db.Date(), nullable=False, default=date.today())
+    photo = db.Column(db.String(150))
     # the one-to-may relation
     beneficiary = db.relationship('Beneficiary',cascade="all,delete", backref='employed', lazy=True)
 
@@ -108,6 +109,7 @@ class Employed(db.Model, PersistentBase):
             "salary": self.salary,
             "status": self.status,
             "date_hire": self.date_hire.isoformat(),
+            "photo": self.photo,
         }
 
     def deserialize(self, data):
@@ -122,6 +124,7 @@ class Employed(db.Model, PersistentBase):
             self.job_position = data["job_position"]
             self.salary = data["salary"]
             self.status = data.get("status")
+            self.photo = data.get("photo")
             date_hire = data.get("date_hire")
             if date_hire:
                 self.date_hire = date.fromisoformat(date_hire)
