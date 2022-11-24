@@ -1,0 +1,27 @@
+version: "3.7"
+
+services:
+
+  db:
+    image: postgres:alpine
+    restart: always
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgresql
+    ports:
+      - 5432:5432
+
+  service:
+    image: employes
+    container_name: employes-service
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    volumes:
+      - ./:/service
+
+volumes:
+  postgresql:
+    driver: local
