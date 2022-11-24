@@ -16,6 +16,7 @@ app.config.from_object(config)
 
 # Add talisman security
 talisman = Talisman(app)
+talisman.force_https= False
 cors = CORS(app, resources={r"*": {"origins": "*"}})
 
 # Import the routes After the Flask app is created

@@ -33,7 +33,7 @@ lint: ## Run the linter
 .PHONY: tests
 tests: ## Run the unit tests
 	$(info Running tests...)
-	nosetests -vv --with-spec --spec-color --with-coverage --cover-package=service
+	export DATABASE_HOST=localhost && export DATABASE_PASSWORD=postgres && nosetests -s
 
 run: ## Run the service
 	$(info Starting service...)
