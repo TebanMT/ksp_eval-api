@@ -15,7 +15,14 @@ app = Flask(__name__)
 app.config.from_object(config)
 
 # Add talisman security
-talisman = Talisman(app)
+#NOTE: USE ENVIRONMENT VARIABLE TO SET THIS
+csp = {
+    'default-src': [
+        '\'self\'',
+        'localhost'
+    ]
+}
+talisman = Talisman(app, content_security_policy=csp)
 talisman.force_https= False
 cors = CORS(app, resources={r"*": {"origins": "*"}})
 
