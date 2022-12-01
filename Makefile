@@ -33,11 +33,15 @@ lint: ## Run the linter
 .PHONY: tests
 tests: ## Run the unit tests
 	$(info Running tests...)
-	export DATABASE_HOST=localhost && export DATABASE_PASSWORD=postgres && nosetests -s
+	export DATABASE_HOST=localhost && nosetests -s
 
 run: ## Run the service
 	$(info Starting service...)
 	honcho start -p 8000
+
+run_flask: ## Run in delevopment mode
+	$(info Starting service...)
+	export DATABASE_HOST=localhost && flask run
 
 dbrm: ## Stop and remove PostgreSQL in Docker
 	$(info Stopping and removing PostgreSQL...)
@@ -48,6 +52,8 @@ db: ## Run PostgreSQL in Docker
 	$(info Running PostgreSQL...)
 	docker run --rm -d --name postgresql \
 		-p 5432:5432 \
-		-e POSTGRES_PASSWORD=postgresql \
+		-e POSTGRES_PASSWORD=postgres \
+		-e DATABASE_PASSWORD=postgres \
+		-e POSTGRES_DB=employes \
 		-v postgresql:/var/lib/postgresql/data \
 		postgres:alpine
