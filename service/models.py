@@ -133,6 +133,7 @@ class Employed(db.Model, PersistentBase):
         except KeyError as error:
             raise DataValidationError("Invalid Employe: missing " + error.args[0]) from error
         except TypeError as error:
+            print(error)
             raise DataValidationError(
                 "Invalid Account: body of request contained "
                 "bad or no data - " + error.args[0]
@@ -174,14 +175,14 @@ class Beneficiary(db.Model, PersistentBase):
 
     def serialize(self):
         """Serializes a Beneficiary into a dictionary"""
-        return [{
+        return {
             "id": self.id,
             "name": self.name,
             "relationship": self.relationship,
             "gender": self.gender,
             "date_born": self.date_born.isoformat(),
             "employed_id": self.employed_id
-        }]
+        }
 
     def deserialize(self, data):
         """
@@ -203,8 +204,15 @@ class Beneficiary(db.Model, PersistentBase):
         except KeyError as error:
             raise DataValidationError("Invalid Beneficiary: missing " + error.args[0]) from error
         except TypeError as error:
+            print(error)
             raise DataValidationError(
                 "Invalid Account: body of request contained "
                 "bad or no data - " + error.args[0]
             ) from error
         return self
+
+    @classmethod
+    def find_by_employe(cls, employed_id):
+        """Finds a record by it's ID"""
+        logger.info("Processing lookup for id %s ...")
+        return cls.query.filter(cls.employed_id == employed_id).all()

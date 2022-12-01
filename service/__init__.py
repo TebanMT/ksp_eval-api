@@ -19,12 +19,12 @@ app.config.from_object(config)
 csp = {
     'default-src': [
         '\'self\'',
-        'localhost'
+        'localhost',
     ]
 }
 talisman = Talisman(app, content_security_policy=csp)
 talisman.force_https= False
-cors = CORS(app, resources={r"*": {"origins": "*"}})
+CORS(app)
 
 # Import the routes After the Flask app is created
 # pylint: disable=wrong-import-position, cyclic-import, wrong-import-order

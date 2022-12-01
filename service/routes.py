@@ -69,10 +69,9 @@ def create_employes():
             beneficiary.deserialize(b)
             beneficiary.employed_id = employe.id
             beneficiary.create()
-            message["beneficiaries"] = message["beneficiaries"].append(beneficiary.serialize())
+            message["beneficiaries"].append(beneficiary.serialize())
      #Uncomment once get_accounts has been implemented
-     #location_url = url_for("get_accounts", account_id=account.id, _external=True)
-    location_url = "/"  # Remove once get_accounts has been implemented
+    location_url = url_for("list_accounts", employe_id=employe.id, _external=True)
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
     )
@@ -93,6 +92,10 @@ def list_accounts():
     if not employes:
         abort(status.HTTP_404_NOT_FOUND, "Not Found Employes")
     employes = [a.serialize() for a in employes]
+    for a in employes:
+        beneficiaries = Beneficiary.find_by_employe(a["id"])
+        b = [b.serialize() for b in beneficiaries]
+        a["beneficiaries"] = b
     return jsonify(employes), status.HTTP_200_OK
 
 ######################################################################
@@ -110,7 +113,11 @@ def read_an_account(employe_id):
     employe = Employed.find(employe_id)
     if not employe:
         abort(status.HTTP_404_NOT_FOUND, f"Employe [{employe_id}] not found")
-    return employe.serialize(), status.HTTP_200_OK
+    result = employe.serialize()
+    beneficiaries = Beneficiary.find_by_employe(employe_id)
+    b = [b.serialize() for b in beneficiaries]
+    result["beneficiaries"] = b
+    return result, status.HTTP_200_OK
 
 
 ######################################################################
@@ -125,9 +132,14 @@ def update_account(employe_id):
     """
     app.logger.info("Request to update an Account")
     employe = Employed.find(employe_id)
+    data_employe = request.get_json()
+    img = data_employe["photo"]
+    if "image" in img:
+        url= util.upload_img(img,data_employe["name"])
+        data_employe["photo"] = url
     if not employe:
         abort(status.HTTP_404_NOT_FOUND, f"Employe [{employe_id}] not found")
-    employe.deserialize(request.get_json())
+    employe.deserialize(data_employe)
     employe.update()
     return employe.serialize(), status.HTTP_200_OK
 
@@ -146,7 +158,7 @@ def delete_account(employe_id):
     employe = Employed.find(employe_id)
     if not employe:
         abort(status.HTTP_404_NOT_FOUND, f"Employe [{employe}] not found")
-    employe.status = "false"
+    employe.status = False
     employe.update()
     return "", status.HTTP_204_NO_CONTENT
 

@@ -65,7 +65,7 @@ class TestEmployedService(TestCase):
         for _ in range(count):
             employe = EmployedFactory()
             beneficiary = BeneficiaryFactory()
-            data = {"employe":employe.serialize(), "beneficiary":beneficiary.serialize()}
+            data = {"employe":employe.serialize(), "beneficiary":[beneficiary.serialize()]}
             response = self.client.post(BASE_URL, json=data)
             self.assertEqual(
                 response.status_code,
@@ -89,7 +89,7 @@ class TestEmployedService(TestCase):
             'X-Frame-Options': 'SAMEORIGIN',
             'X-XSS-Protection': '1; mode=block',
             'X-Content-Type-Options': 'nosniff',
-            'Content-Security-Policy': 'default-src \'self\'; object-src \'none\'',
+            'Content-Security-Policy': 'default-src \'self\' localhost',
             'Referrer-Policy': 'strict-origin-when-cross-origin'
         }
         for key, value in headers.items():
@@ -108,7 +108,8 @@ class TestEmployedService(TestCase):
         mock_upload_img.return_value = ""
         employe = EmployedFactory()
         beneficiary = BeneficiaryFactory(employed_id=employe.id)
-        data = {"employe":employe.serialize(), "beneficiary":beneficiary.serialize()}
+        data = {"employe":employe.serialize(), "beneficiary":[beneficiary.serialize()]}
+        #print(data)
         response = self.client.post(
             BASE_URL,
             json=data,

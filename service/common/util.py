@@ -16,13 +16,11 @@ CLIENT = session.client("s3",
 
 def upload_img(img, name):
     typee = re.search("image/[a-z]*", img)
-    #img = re.sub(r"^data:image/.*,","",img)
-    image_base64=base64.b64encode(bytes(img,"utf-8"))
+    img = re.sub(r"^data:image/.*,","",img)
     name = name+"."+typee.group().split("/")[1]
-    #image_base64 = base64.decode(img)
     res = CLIENT.put_object(Bucket="evaluacion-ksp",
                   Key=name, # Object key, referenced whenever you want to access this file later.
-                  Body=base64.b64decode(image_base64), # The object's contents.
+                  Body=base64.b64decode(img), # The object's contents.
                   ACL='public-read', # Defines Access-control List (ACL) permissions, such as private or public.
                   ContentType=typee.group()
                 )
